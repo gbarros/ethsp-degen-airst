@@ -29,7 +29,7 @@ contract AIDeGen is ERC721, AccessControl, ERC721URIStorage {
     }
 
     function _baseURI() internal pure override returns (string memory) {
-        return "ipfs://"; //set concat
+        return "ipfs://";
     }
 
     /// @param to address of the owner of this token
