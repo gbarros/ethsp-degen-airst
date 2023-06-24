@@ -21,6 +21,7 @@ contract AIDeGen is ERC721, ERC721URIStorage, Ownable {
     }
 
     function finishSetup(address _cartesiDapp) external onlyOwner{
+        cartesiDapp = _cartesiDapp;
         transferOwnership(_cartesiDapp);
     }
 
@@ -28,7 +29,7 @@ contract AIDeGen is ERC721, ERC721URIStorage, Ownable {
         return "ipfs://";
     }
     
-    /// 
+    ///  safeMint - mint a new NFT using the cartesi dapp rollup
     /// @param to address of the owner of this token
     /// @param uri IPFS hash of JSON metadata file
     function safeMint(address to, string memory uri) public onlyOwner {

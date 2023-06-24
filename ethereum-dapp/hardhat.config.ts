@@ -2,6 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import { HttpNetworkUserConfig } from "hardhat/types";
 
 import "@nomicfoundation/hardhat-toolbox";
+import "@nomicfoundation/hardhat-verify";
 import "hardhat-deploy";
 
 
@@ -37,10 +38,24 @@ const config: HardhatUserConfig = {
     deploy: "deploy",
     deployments: "deployments",
   },
-    typechain: {
-        outDir: "src/types",
-        target: "ethers-v6",
+  typechain: {
+    outDir: "src/types",
+    target: "ethers-v6",
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY,
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
     },
+    user: {
+      default: 0,
+    },
+    worker: {
+      default: 1,
+    },
+  },
 };
 
 export default config;
