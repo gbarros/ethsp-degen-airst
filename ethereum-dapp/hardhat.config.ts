@@ -32,7 +32,19 @@ const config: HardhatUserConfig = {
     goerli: infuraNetwork("goerli", 5, 6283185),
     sepolia: infuraNetwork("sepolia", 11155111, 6283185),
   },
-  solidity: "0.8.18",
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.18",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+    ]
+  },
   paths: {
     artifacts: "artifacts",
     deploy: "deploy",

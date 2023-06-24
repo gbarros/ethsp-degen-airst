@@ -14,23 +14,18 @@ contract AIDeGen is ERC721, AccessControl, ERC721URIStorage {
 
     constructor(
         address user,
-        address cartesiDapp,
         string memory _cid
     ) ERC721("AIDeGen", "ADG") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
-        _grantRole(MINTER_ROLE, cartesiDapp);
         _setIpfsID(_cid);
         safeMint(user);
     }
 
     function _setIpfsID(string memory _cid) internal {
-        ipfsID = string(abi.encodePacked(_baseURI(), _cid));
+        ipfsID = string(abi.encodePacked("ipfs://", _cid));
     }
 
-    function _baseURI() internal pure override returns (string memory) {
-        return "ipfs://";
-    }
 
     /// @param to address of the owner of this token
     function safeMint(address to) public onlyRole(MINTER_ROLE) {
