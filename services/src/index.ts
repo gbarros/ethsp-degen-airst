@@ -52,6 +52,18 @@ async function createNFT(degen: AIDeGen) {
     console.log("NFT NOTICE created");
 }
 
+async function checkNewNotice(degen: AIDeGen, lastId: number) {
+    try {
+        await getNotice(graphQLAPI, (lastId + 1).toString());
+    } catch (error) {
+        const msg = (error as Error).message;
+        if(msg.includes("[GraphQL] Unable to find notice with id"))
+            return false;
+        throw error;
+    }
+    return true;
+}
+
 (async () => {
     const provider = new ethers.JsonRpcProvider();
     const signer = await provider.getSigner();
@@ -70,9 +82,9 @@ async function createNFT(degen: AIDeGen) {
         setupNode(degen);
     }
 
-    await verifyNotice(output, "1"); 
 
-    // createNFT(degen);
+    console.log(await checkNewNotice(degen, 0));
+
 
 
 })();
