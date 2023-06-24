@@ -6,8 +6,8 @@ const func: DeployFunction = async (bre: HardhatRuntimeEnvironment) => {
     const { deploy } = deployments;
     const { deployer } = await getNamedAccounts();
 
-    await deploy("AIDeGen", { from: deployer, log: true });
+    await deploy("AIDeGenFactory", { from: deployer, log: true });
 };
 
-func.tags = ["Main"];
+func.tags = ["Factory"];
 export default func;

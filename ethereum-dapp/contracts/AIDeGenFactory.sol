@@ -33,6 +33,7 @@ contract AIDeGenFactory is AccessControl {
     }
 
     function setCartesiDapp(address _cartesiDapp) public onlyOwner {
+        //@ todo transfer ownership of the dapp to this contract
         cartesiDapp = _cartesiDapp;
     }
 
