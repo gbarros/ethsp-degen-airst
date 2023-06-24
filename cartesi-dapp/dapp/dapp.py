@@ -14,11 +14,12 @@ from os import environ
 import logging
 import requests
 
+from .cartesi import send_notice, send_report
+
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
 
 rollup_server = environ.get("ROLLUP_HTTP_SERVER_URL", '')
-logger.info(f"HTTP rollup_server url is {rollup_server}")
 
 
 def hex2str(hex):
@@ -40,11 +41,17 @@ def handle_advance(data):
 
     decoded_data = hex2str(data['payload'])
     logger.info("Echoing '%s'", decoded_data)
-    notice = {"payload": str2hex(decoded_data)}
+    notice = {"payload": str2hex('QmQygJ7BhLeEhRe8kstLHwkQdKzJAkJYGSju6XZiFAe15Y')}
 
-    logger.info("Adding notice")
-    response = requests.post(rollup_server + "/notice", json=notice)
-    logger.info(f"Received notice status {response.status_code} body {response.content}")
+    import pathlib
+    sample_image = (
+        pathlib.Path(__file__).parent.parent / 'tests' / 'sample_image.jpg'
+    )
+    sample_image = sample_image.read_bytes()
+    report = {'payload': '0x' + sample_image.hex()}
+
+    send_notice(notice)
+    send_report(report)
     return "accept"
 
 
@@ -55,9 +62,7 @@ def handle_inspect(data):
     logger.info("Echoing '%s'", decoded_data)
     report = {"payload": str2hex(decoded_data)}
 
-    logger.info("Adding report")
-    response = requests.post(rollup_server + "/report", json=report)
-    logger.info(f"Received report status {response.status_code}")
+    send_report(report)
     return "accept"
 
 
