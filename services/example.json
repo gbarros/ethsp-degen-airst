@@ -1,0 +1,15 @@
+{
+  "name": "Offset Carbon 01",
+  "description": "offsetCarbon level 1",
+  "image": "https://ipfs.io/ipfs/QmVuMsJsADGYGeYSvp7YCiButuBa3nUiEwspPFGtgdiZeU/offsetCarbon01.png",
+  "attributes": [
+    {
+      "trait-type": "offsetCarbonLevelLevel",
+      "value": "offsetCarbonLevel"
+    },
+    {
+      "trait-type": "offsetCarbonType",
+      "value": "UNKNOWN"
+    }
+  ]
+}

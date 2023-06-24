@@ -6,9 +6,10 @@
   "author": "Felipe Grael, Gabriel Barros e Henrique Marlon",
   "license": "MIT",
   "dependencies": {
+    "@cartesi/rollups": "^0.8.2",
+    "@pinata/sdk": "^2.1.0",
     "@types/node": "^18.7.18",
     "@urql/core": "^3.0.3",
-    "@cartesi/rollups": "^0.8.2",
     "ai-degen-nft": "link:../ethereum-dapp/ai-degen-nft",
     "ethers": "^6.6.1",
     "graphql": "^16.7.1",

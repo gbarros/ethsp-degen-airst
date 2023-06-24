@@ -1,8 +1,8 @@
-import {ethers} from "ethers";
-import {AIDeGenFactory__factory, AIDeGenFactory } from "ai-degen-nft";
-import {OutputValidityProofStruct } from "ai-degen-nft/src/types/contracts/AIDeGenFactory";
+
+import { AIDeGenFactory, OutputValidityProofStruct } from "ai-degen-nft/src/types/contracts/AIDeGenFactory";
 // import {IOutput__factory} from "@cartesi/rollups/dist/src/types/factories/contracts/interfaces/IOutput__factory"
 import { getNotice } from "./notice";
+
 
 //@TODO use exports from hardhat-deploy / export
 // implement extra scripts
@@ -32,7 +32,7 @@ async function finishCollectionCreation(factory: AIDeGenFactory, id: string) {
     const ret = await factory.newNFTCollection(cartesiDappAddr, "QmaAS123", notice.payload, proof);
     // console.log(`notice is valid! (ret="${ret}")`, proof);
 }
-async function setupNode(degen: AIDeGenFactory) {   
+async function setupNode(degen: AIDeGenFactory) {
     try {
         const tx = await degen.setCartesiDapp(cartesiDappAddr);
     } catch (error) {
@@ -55,7 +55,7 @@ async function checkNewNotice(degen: AIDeGenFactory, lastId: number) {
         await getNotice(graphQLAPI, (lastId + 1).toString());
     } catch (error) {
         const msg = (error as Error).message;
-        if(msg.includes("[GraphQL] Unable to find notice with id"))
+        if (msg.includes("[GraphQL] Unable to find notice with id"))
             return false;
         throw error;
     }
@@ -63,26 +63,27 @@ async function checkNewNotice(degen: AIDeGenFactory, lastId: number) {
 }
 
 (async () => {
-    const provider = new ethers.JsonRpcProvider();
-    const signer = await provider.getSigner();
-    const degenFactory = AIDeGenFactory__factory.connect(deployment.address, signer);
-    
-    // const output = IOutput__factory.connect(cartesiDappAddr, signer);
+    // const provider = new ethers.JsonRpcProvider();
+    // const signer = await provider.getSigner();
+    // const degenFactory = AIDeGenFactory__factory.connect(deployment.address, signer);
 
-    const currentAddress = await degenFactory.cartesiDapp();
-    // const owner = await degenFactory.owner()
+    // // const output = IOutput__factory.connect(cartesiDappAddr, signer);
+
+    // const currentAddress = await degenFactory.cartesiDapp();
+    // // const owner = await degenFactory.owner()
 
 
-    console.log(currentAddress, deployment.address, ethers.ZeroAddress)
+    // console.log(currentAddress, deployment.address, ethers.ZeroAddress)
 
-    // currentAddress is the address of the current CartesiDApp and should be zero if not set
-    if(currentAddress === ethers.ZeroAddress) {
-        await setupNode(degenFactory);
-    }
-    
+    // // currentAddress is the address of the current CartesiDApp and should be zero if not set
+    // if(currentAddress === ethers.ZeroAddress) {
+    //     await setupNode(degenFactory);
+    // }
 
-    console.log( await finishCollectionCreation(degenFactory, "1"));
-    // console.log(await checkNewNotice(degenFactory, 0));
+
+    // console.log( await finishCollectionCreation(degenFactory, "1"));
+    // // console.log(await checkNewNotice(degenFactory, 0));
+
 
 
 
