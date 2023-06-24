@@ -1,63 +1,64 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@cartesi/rollups/contracts/interfaces/IInput.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract AIDeGen is ERC721, ERC721URIStorage, Ownable {
+contract AIDeGen is ERC721, AccessControl, ERC721URIStorage {
+    string public ipfsID;
     using Counters for Counters.Counter;
-
     Counters.Counter private _tokenIdCounter;
-    address public cartesiDapp;
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    constructor() ERC721("AIDeGen", "ADG") {}
-
-    function generateNFT(bytes calldata prompt) external payable {
-        //@TODO charge for the generation
-        IInput(cartesiDapp).addInput(prompt);
+    constructor(
+        address user,
+        address cartesiDapp,
+        string memory _cid
+    ) ERC721("AIDeGen", "ADG") {
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(MINTER_ROLE, msg.sender);
+        _grantRole(MINTER_ROLE, cartesiDapp);
+        _setIpfsID(_cid);
+        safeMint(user);
     }
 
-    function finishSetup(address _cartesiDapp) external onlyOwner{
-        cartesiDapp = _cartesiDapp;
-        transferOwnership(_cartesiDapp);
+    function _setIpfsID(string memory _cid) internal {
+        ipfsID = string(abi.encodePacked(_baseURI(), _cid));
     }
 
     function _baseURI() internal pure override returns (string memory) {
         return "ipfs://";
     }
-    
-    ///  safeMint - mint a new NFT using the cartesi dapp rollup
+
     /// @param to address of the owner of this token
-    /// @param uri IPFS hash of JSON metadata file
-    function safeMint(address to, string memory uri) public onlyOwner {
+    function safeMint(address to) public onlyRole(MINTER_ROLE) {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
     }
 
     // The following functions are overrides required by Solidity.
 
-    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+    function _burn(
+        uint256 tokenId
+    ) internal override(ERC721, ERC721URIStorage) {
         super._burn(tokenId);
     }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
-        return super.tokenURI(tokenId);
+    function tokenURI(
+        uint256 tokenId
+    ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+        return ipfsID;
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
-        override(ERC721, ERC721URIStorage)
+        override(ERC721, AccessControl, ERC721URIStorage)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
