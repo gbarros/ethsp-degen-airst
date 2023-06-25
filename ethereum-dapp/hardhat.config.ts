@@ -26,7 +26,8 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: mnemonic ? { accounts: { mnemonic } } : {},
     localhost: {
-      url: "http://localhost:8545",
+      // url: "http://localhost:8545",
+      url: "http://192.168.1.75:8888",
       accounts: mnemonic ? { mnemonic } : undefined,
     },
     goerli: infuraNetwork("goerli", 5, 6283185),

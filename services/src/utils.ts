@@ -1,14 +1,16 @@
 import { AIDeGenFactory, OutputValidityProofStruct } from "ai-degen-nft/src/types/contracts/AIDeGenFactory";
 
-import { getNotice } from "./notice";
+import { getNotice, parsePayload } from "./notice";
 import { getReport } from "./report";
-import { saveImageToDisk,uploadImg, buildJSONFile, uploadJSONFile, cleanFiles } from "./pinata";
+import { saveImageToDisk, uploadImg, buildJSONFile, saveJSONFile, uploadJSONFile, cleanFiles } from "./pinata";
+import { Notice } from "../generated-src/graphql";
 
 
+// const graphQLAPI = "http://localhost:4000/graphql";// generalize for other networks
+const graphQLAPI = "http://192.168.1.75:2224/graphql";// generalize for other networks
 
-const graphQLAPI = "http://localhost:4000/graphql";
 
-export function wait(ms:number) {
+export function wait(ms: number) {
     return new Promise((resolve, reject) => {
         setTimeout(resolve, ms);
     });
@@ -41,11 +43,9 @@ export async function checkNewNotice(lastId: number) {
     return true;
 }
 
-export async function finishCollectionCreation(factory: AIDeGenFactory, id: string, cartesiDappAddr: string, ipfsURI: string) {
-
-    const notice = await getNotice(graphQLAPI, id);
+export async function finishCollectionCreation(factory: AIDeGenFactory, notice: Notice, cartesiDappAddr: string, ipfsURI: string) {
     if (!notice.proof) {
-        console.log(`notice "${id}" has no associated proof yet`);
+        console.log(`notice "${notice.id}" has no associated proof yet`);
         return;
     }
     const proof: OutputValidityProofStruct = {
@@ -60,23 +60,29 @@ export async function finishCollectionCreation(factory: AIDeGenFactory, id: stri
     console.log("[finishCollectionCreation]", log);
 }
 
-export async function processNewNotice(factory: AIDeGenFactory, lastId:number, cartesiDappAddr: string) {
+export async function processNewNotice(factory: AIDeGenFactory, lastId: number, cartesiDappAddr: string) {
+    const notice = await getNotice(graphQLAPI, `${lastId}`);
     const report = await getReport(graphQLAPI, `${lastId}`);
-    const imgFile =  await saveImageToDisk(report.payload);
+    const noticePayload = parsePayload(notice.payload);
+    const imgFileName = noticePayload.descriptor_data.name;
+    
+    const imgFile = await saveImageToDisk(report.payload, imgFileName);
     console.log("img saved to disk")
-    const imgIpfsHash = await uploadImg(imgFile, `${lastId}.jpg`);
-    console.log("uploaded to ipfs", imgIpfsHash)
 
-    const jsonFile = await buildJSONFile(imgIpfsHash, `${lastId}`);
+    const imgIpfsHash = await uploadImg(imgFile, imgFileName);
+    console.log("img uploaded to ipfs", imgIpfsHash)
+
+    // const jsonFile = await buildJSONFile(imgIpfsHash, `${lastId}`);
+    const jsonFile = await saveJSONFile(noticePayload.descriptor_rawdata, `${lastId}`);
     console.log("json file created")
 
-    const jsonIpfsHash =  await uploadJSONFile(jsonFile, jsonFile);
+    const jsonIpfsHash = await uploadJSONFile(jsonFile, jsonFile);
     console.log("json uploaded to ipfs", jsonIpfsHash)
 
-    await finishCollectionCreation(factory, `${lastId}`, cartesiDappAddr, jsonIpfsHash);
+    await finishCollectionCreation(factory, notice, cartesiDappAddr, jsonIpfsHash);
     console.log("collection created")
 
-    await cleanFiles(jsonFile);
+    await cleanFiles(jsonFile, imgFileName);
     console.log("files cleaned")
 
 }

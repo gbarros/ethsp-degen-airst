@@ -1,6 +1,4 @@
 import { ethers } from "ethers";
-
-
 import { AIDeGenFactory__factory, AIDeGen__factory } from "ai-degen-nft/src/types/factories/contracts";
 import { AIDeGenFactory } from "ai-degen-nft/src/types/contracts";
 
@@ -11,9 +9,9 @@ import {setupNode, wait, checkNewNotice, processNewNotice} from "./utils";
 // generalize for other networks
 import * as deployment from "ai-degen-nft/deployments/localhost/AIDeGenFactory.json";
 
-//@TODO use deployment file & network from cartesi-dapp
-const cartesiDappAddr = "0xF8C694fd58360De278d5fF2276B7130Bfdc0192A";
-const graphQLAPI = "http://localhost:4000/graphql";
+// @TODO generalize for other networks
+import * as dapp from "../../cartesi-dapp/deployments/localhost/dapp.json";	
+const cartesiDappAddr = dapp.address;
 
 async function checkTokenURI(factory: AIDeGenFactory, signer: ethers.JsonRpcSigner) {
     const addrr = await factory.nftCollections(0);
@@ -26,7 +24,7 @@ async function checkTokenURI(factory: AIDeGenFactory, signer: ethers.JsonRpcSign
 }
 
 (async () => {
-    const provider = new ethers.JsonRpcProvider();
+    const provider = new ethers.JsonRpcProvider("http:/\/192.168.1.75:8888");
     const signer = await provider.getSigner();
     const degenFactory = AIDeGenFactory__factory.connect(deployment.address, signer);
 
@@ -51,7 +49,7 @@ async function checkTokenURI(factory: AIDeGenFactory, signer: ethers.JsonRpcSign
         await wait(5* 1000); // 5 seconds
     }
 
-
+    
 })();
 
 
