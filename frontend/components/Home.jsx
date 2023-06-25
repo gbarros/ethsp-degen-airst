@@ -23,7 +23,7 @@ const Home = () => {
 					type="button"
 					className="hover:bg-white px-4 py-2 rounded-full border-[1px] border-grey transition duration-300 ease-in-out w-44 font-semibold text-white bg-darkgreen hover:text-grey text-md"
 					
-				><Link href='/#best-sellers' >Create</Link>
+				><Link href='/#best-sellers'>Create</Link>
 					
 				</button>
 			</div>

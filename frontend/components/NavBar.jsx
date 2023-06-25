@@ -1,9 +1,7 @@
-'use client';
-
 import Image from 'next/image';
 import logo from '../public/assets/icon.svg';
 import WalletContext from '@/context/WalletContext';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import ConnectWallet from './ConnectWallet';
 
 const NavBar = () => {
