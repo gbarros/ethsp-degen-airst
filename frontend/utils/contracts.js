@@ -1,0 +1,1 @@
+require("ai-degen-nft/dist/src/types/factories/contracts/AIDeGenFactory__factory")

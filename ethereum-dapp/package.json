@@ -8,7 +8,8 @@
   "scripts": {
     "clean": "run-s clean:hardhat clean:ignored",
     "clean:hardhat": "hardhat clean",
-    "clean:ignored": "rimraf artifacts cache coverage deployments/localhost dist generated-src src/types/*"
+    "clean:ignored": "rimraf artifacts cache coverage deployments/localhost dist generated-src src/types/*",
+    "build:js": "tsc --outDir ./dist"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
