@@ -71,7 +71,7 @@ async function getCounts(collectionsList) {
 
     await mintNewNFTToken(degenFactory, 0, "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4");
 
-})();
+});
 
 
 module.exports = {

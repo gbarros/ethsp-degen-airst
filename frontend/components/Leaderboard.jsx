@@ -1,7 +1,35 @@
 'use client';
+const contracts = require('../utils/contracts');
 
-const Leaderboard = () => {
+const { AIDeGenFactory__factory } = require("ai-degen-nft/dist/src/types/factories/contracts/AIDeGenFactory__factory")
+
+const Leaderboard = async () => {
+
+    const signer = await provider.getSigner();
+    const degenFactory = AIDeGenFactory__factory.connect(factoryAddr, signer);
+    const collections = await contracts.getAllCollections(degenFactory, signer)
+
+
+    const buttonClick = async () => {
+        alert('OK');
+
+        const collectioID = 0;
+        const addressReceiver = "0x00aa39d30f0d20ff03a22ccfc30b7efbfca597c2"
+
+        await contracts.mintNewNFTToken(degenFactory, collectioID, addressReceiver);
+        
+    }
+
+    const buttonCreateClick = async () => {
+        const data = {
+            name: "Teste",
+            description: "Teste",
+        }
+        await contracts.mintNewNFTCollection(degenFactory, data);
+    }
+
     return (
+        // for i in collections.length
         <div
             className="bg-darkgreen w-full min-h-screen px-10"
             id="leaderboard"
@@ -40,7 +68,7 @@ const Leaderboard = () => {
                         <p className="py-4">Description</p>
                         <div>
                             {/* if there is a button in form, it will close the modal */}
-                            <button className="hover:bg-white px-4 py-2 rounded-full border-[1px] border-grey transition duration-300 ease-in-out w-44 font-semibold text-white bg-darkgreen hover:text-grey text-md" onClick={() => alert('OK')}>Mint</button>
+                            <button className="hover:bg-white px-4 py-2 rounded-full border-[1px] border-grey transition duration-300 ease-in-out w-44 font-semibold text-white bg-darkgreen hover:text-grey text-md" onClick={buttonClick()}>Mint</button>
                         </div>
                     </form>
                 </dialog>
@@ -142,6 +170,7 @@ const Leaderboard = () => {
                             <div className="flex justify-center my-4">
                                 <button
                                     type="button"
+                                    onClick={buttonCreateClick()}
                                     className="hover:bg-white px-4 py-2 rounded-full border-[1px] border-grey transition duration-300 ease-in-out w-44 font-semibold text-white bg-darkgreen hover:text-grey text-md"
                                 >
                                     Create
