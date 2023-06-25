@@ -4,10 +4,11 @@ import logo from 'public/assets/home-logo.svg';
 import heroPic from '/public/assets/home-img.svg';
 import Leaderboard from '@/components/Leaderboard';
 import HowItWorks from '@/components/HowItWorks';
+import Footer from '@/components/Footer';
 
 export default function LandingPage() {
     return (
-        <div className="w-full overflow-hidden scroll-smooth	">
+        <div className="w-full overflow-hidden scroll-smooth">
             <Home id="home" />
             <Image
                 src={logo}
@@ -19,8 +20,9 @@ export default function LandingPage() {
                 alt="home-bg"
                 className="absolute w-[50%] right-24 top-[62vh]"
             />
-            <Leaderboard id="best-sellers" />
+            <Leaderboard />
             <HowItWorks id="how-it-works" />
+            <Footer />
         </div>
     );
 }
