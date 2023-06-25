@@ -12,12 +12,12 @@ const Home = () => {
 					NFT's with IA
 				</h1>
 				<p className="text-md mt-5">
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sed facilisis diam. Praesent tincidunt lobortis turpis. In vehicula posuere iaculis. Nunc a metus eu turpis ultrices tincidunt sed sed metus.  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+				The money raised from the sale of these NFTs will be directed to Non-Governmental Organizations (NGOs), thus promoting support for initiatives related to the Sustainable Development Goals.
 				</p>
 			</div>
 			<div className="flex flex-col justify-start mt-4 flex-1 ml-12 gap-6">
 				<p className="text-md">
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sed facilisis diam. Praesent tincidunt lobortis turpis. In vehicula posuere iaculis. Nunc a metus eu turpis ultrices tincidunt sed sed metus.  Lorem ipsum dolor sit amet, consectetur adipiscing elit.{' '}
+				Our project aims to leverage the current interest and popularity of NFTs to generate positive social impact. Our NFT generation solution is powered by an AI model that converts text into high-quality images. These images will be unique to each NFT, ensuring the authenticity and rarity of the digital assets.{' '}
 				</p>
 				<button
 					type="button"
