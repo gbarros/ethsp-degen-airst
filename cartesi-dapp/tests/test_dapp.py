@@ -14,7 +14,12 @@ class TestDapp(unittest.TestCase):
     @patch('dapp.dapp.send_notice')
     def test_advance(self, mock_notice, mock_report):
 
-        data = {"payload": "0x4F6CC3A1204D756E646F21"}
+        data = {
+            "payload": (
+                "0x7b22636c617373223a2033302c202272616e646f6d5f737472223a202269"
+                "6d6167656d207465737465227d"
+            )
+        }
         result = handle_advance(data)
         mock_notice.assert_called()
         mock_report.assert_called()

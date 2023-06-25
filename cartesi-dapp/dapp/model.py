@@ -87,6 +87,7 @@ class Model:
         return noise
 
     def gen_image(self, klass: int, random_str: str, truncation: float = 0.5):
+        self.load()
 
         # Input truncation
         self.interp.set_tensor(self._input_trunc_idx, np.float32(truncation))

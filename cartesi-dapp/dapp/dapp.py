@@ -17,11 +17,14 @@ import requests
 
 from .cartesi import send_notice, send_report
 from .ipfs import get_media_descriptor
+from .model import Model, image_to_bytes
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
 
 rollup_server = environ.get("ROLLUP_HTTP_SERVER_URL", '')
+
+MODEL = Model()
 
 
 def hex2str(hex):
@@ -43,21 +46,24 @@ def _create_notice_payload(data: bytes):
     descr = json.dumps(descr)
     return str2hex(descr)
 
+def _decode_payload(payload: str):
+    data = json.loads(hex2str(payload))
+    return (
+        data.get('class', 0),
+        data.get('random_str', ''),
+    )
 
 def handle_advance(data):
     logger.info(f"Received advance request data {data}")
 
-    decoded_data = hex2str(data['payload'])
-    logger.info("Echoing '%s'", decoded_data)
+    klass, random_str = _decode_payload(data['payload'])
+    logger.info("Generating image for class %s, seed '%s'", klass, random_str)
 
-    import pathlib
-    sample_image = (
-        pathlib.Path(__file__).parent.parent / 'tests' / 'sample_image.jpg'
-    )
-    sample_image = sample_image.read_bytes()
+    img = MODEL.gen_image(klass=klass, random_str=random_str)
+    img_data = image_to_bytes(img)
 
-    notice = {"payload": _create_notice_payload(sample_image)}
-    report = {'payload': '0x' + sample_image.hex()}
+    notice = {"payload": _create_notice_payload(img_data)}
+    report = {'payload': '0x' + img_data.hex()}
 
     send_notice(notice)
     send_report(report)
@@ -82,6 +88,7 @@ handlers = {
 
 
 def main_loop():
+    MODEL.load()
     finish = {"status": "accept"}
     rollup_address = None
 
