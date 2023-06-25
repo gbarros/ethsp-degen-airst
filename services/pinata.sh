@@ -1,0 +1,8 @@
+PINATA_APIKey=123
+PINATA_APISecret=123
+PINATA_JWT=123
+
+
+export PINATA_APIKey
+export PINATA_APISecret
+export PINATA_JWT
