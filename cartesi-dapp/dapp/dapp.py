@@ -11,10 +11,12 @@
 # specific language governing permissions and limitations under the License.
 
 from os import environ
+import json
 import logging
 import requests
 
 from .cartesi import send_notice, send_report
+from .ipfs import get_media_descriptor
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
@@ -36,18 +38,25 @@ def str2hex(str):
     return "0x" + str.encode("utf-8").hex()
 
 
+def _create_notice_payload(data: bytes):
+    descr = get_media_descriptor(data)
+    descr = json.dumps(descr)
+    return str2hex(descr)
+
+
 def handle_advance(data):
     logger.info(f"Received advance request data {data}")
 
     decoded_data = hex2str(data['payload'])
     logger.info("Echoing '%s'", decoded_data)
-    notice = {"payload": str2hex('QmQygJ7BhLeEhRe8kstLHwkQdKzJAkJYGSju6XZiFAe15Y')}
 
     import pathlib
     sample_image = (
         pathlib.Path(__file__).parent.parent / 'tests' / 'sample_image.jpg'
     )
     sample_image = sample_image.read_bytes()
+
+    notice = {"payload": _create_notice_payload(sample_image)}
     report = {'payload': '0x' + sample_image.hex()}
 
     send_notice(notice)

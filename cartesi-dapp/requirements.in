@@ -2,3 +2,5 @@ numpy==1.24.3
 #tflite_runtime==2.12.0
 pillow
 requests
+base58==2.1.1
+protobuf==4.23.2
