@@ -4,8 +4,7 @@ Acceptance Tests for the whole dapp
 import unittest
 from unittest.mock import patch
 
-import dapp.cartesi
-from dapp.dapp import handle_advance
+import dapp.dapp
 
 
 class TestDapp(unittest.TestCase):
@@ -20,7 +19,13 @@ class TestDapp(unittest.TestCase):
                 "6d6167656d207465737465227d"
             )
         }
-        result = handle_advance(data)
+        result = dapp.dapp.handle_advance(data)
         mock_notice.assert_called()
         mock_report.assert_called()
         self.assertEqual(result, 'accept')
+
+    def test_filename(self):
+
+        dapp.dapp.MODEL.load()
+        fname = dapp.dapp._get_filename(5)
+        self.assertEqual(fname, 'electric_ray.jpg')

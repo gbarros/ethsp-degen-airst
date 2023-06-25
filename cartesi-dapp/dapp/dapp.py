@@ -53,6 +53,15 @@ def _decode_payload(payload: str):
         data.get('random_str', ''),
     )
 
+
+def _get_filename(klass):
+    name = MODEL.labels[klass]
+    name = (
+        name.lower().replace(' ', '_')
+    )
+    return name + '.jpg'
+
+
 def handle_advance(data):
     logger.info(f"Received advance request data {data}")
 
@@ -61,8 +70,9 @@ def handle_advance(data):
 
     img = MODEL.gen_image(klass=klass, random_str=random_str)
     img_data = image_to_bytes(img)
+    filename = _get_filename(klass)
 
-    notice = {"payload": _create_notice_payload(img_data)}
+    notice = {"payload": _create_notice_payload(img_data, filename=filename)}
     report = {'payload': '0x' + img_data.hex()}
 
     send_notice(notice)
