@@ -40,7 +40,7 @@ const Leaderboard = () => {
                         <p className="py-4">Description</p>
                         <div>
                             {/* if there is a button in form, it will close the modal */}
-                            <button className="hover:bg-white px-4 py-2 rounded-full border-[1px] border-grey transition duration-300 ease-in-out w-44 font-semibold text-white bg-darkgreen hover:text-grey text-md" onClick={alert}>Mint</button>
+                            <button className="hover:bg-white px-4 py-2 rounded-full border-[1px] border-grey transition duration-300 ease-in-out w-44 font-semibold text-white bg-darkgreen hover:text-grey text-md" onClick={() => alert('OK')}>Mint</button>
                         </div>
                     </form>
                 </dialog>
