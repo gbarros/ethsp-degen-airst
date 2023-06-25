@@ -170,6 +170,12 @@ services:
         "/opt/cartesi/share/dapp-bin/hash",
         "--outputFile",
         "/deployments/localhost/dapp.json",
+        # epoch - default 1 day
+        "--inputDuration",
+        "30",
+        # challenge - default 7 days
+        "--challengePeriod",
+        "30",
       ]
     volumes:
       - blockchain-data:/opt/cartesi/share/blockchain

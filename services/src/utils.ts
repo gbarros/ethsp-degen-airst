@@ -1,0 +1,89 @@
+import { AIDeGenFactory, OutputValidityProofStruct } from "ai-degen-nft/src/types/contracts/AIDeGenFactory";
+
+import { getNotice } from "./notice";
+import { getReport } from "./report";
+import { saveImageToDisk,uploadImg, buildJSONFile, uploadJSONFile, cleanFiles } from "./pinata";
+
+
+
+const graphQLAPI = "http://localhost:4000/graphql";
+
+export function wait(ms:number) {
+    return new Promise((resolve, reject) => {
+        setTimeout(resolve, ms);
+    });
+}
+
+export async function setupNode(factory: AIDeGenFactory, cartesiDappAddr: string) {
+    try {
+        const tx = await factory.setCartesiDapp(cartesiDappAddr);
+    } catch (error) {
+        console.log("This node is already setup", (error as Error).message);
+    }
+    const newAddress = await factory.cartesiDapp();
+    const newOwner = await factory.owner();
+    console.log("[setupNode finished]", newAddress, newOwner);
+}
+
+export async function checkNewNotice(lastId: number) {
+    try {
+        const notice = await getNotice(graphQLAPI, (lastId + 1).toString());
+        if (!notice.proof) {
+            console.log(`notice "${lastId}" has no associated proof yet`);
+            return false;
+        }
+    } catch (error) {
+        const msg = (error as Error).message;
+        if (msg.includes("[GraphQL] Unable to find notice with id"))
+            return false;
+        throw error;
+    }
+    return true;
+}
+
+export async function finishCollectionCreation(factory: AIDeGenFactory, id: string, cartesiDappAddr: string, ipfsURI: string) {
+
+    const notice = await getNotice(graphQLAPI, id);
+    if (!notice.proof) {
+        console.log(`notice "${id}" has no associated proof yet`);
+        return;
+    }
+    const proof: OutputValidityProofStruct = {
+        ...notice.proof,
+        epochIndex: notice.input.epoch.index,
+        inputIndex: notice.input.index,
+        outputIndex: notice.index,
+    };
+
+    const tx = await factory.newNFTCollection(cartesiDappAddr, ipfsURI, notice.payload, proof);
+    const log = await tx.wait(1);
+    console.log("[finishCollectionCreation]", log);
+}
+
+export async function processNewNotice(factory: AIDeGenFactory, lastId:number, cartesiDappAddr: string) {
+    const report = await getReport(graphQLAPI, `${lastId}`);
+    const imgFile =  await saveImageToDisk(report.payload);
+    console.log("img saved to disk")
+    const imgIpfsHash = await uploadImg(imgFile, `${lastId}.jpg`);
+    console.log("uploaded to ipfs", imgIpfsHash)
+
+    const jsonFile = await buildJSONFile(imgIpfsHash, `${lastId}`);
+    console.log("json file created")
+
+    const jsonIpfsHash =  await uploadJSONFile(jsonFile, jsonFile);
+    console.log("json uploaded to ipfs", jsonIpfsHash)
+
+    await finishCollectionCreation(factory, `${lastId}`, cartesiDappAddr, jsonIpfsHash);
+    console.log("collection created")
+
+    await cleanFiles(jsonFile);
+    console.log("files cleaned")
+
+}
+
+// // this is supposed to be called by the frontend
+// export async function createNFT(degen: AIDeGenFactory) {
+//     console.log("Attempt to generate NFT NOTICE");
+//     const tx2 = await degen.generateNFT(ethers.encodeBytes32String("Simple Notice 123"), { value: ethers.parseEther("0.01") });
+//     console.log("NFT NOTICE created");
+// }

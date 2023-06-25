@@ -15,7 +15,7 @@ contract AIDeGenFactory is AccessControl {
         uint256 collectionID
     );
     mapping(uint256 => address) public nftCollections;
-    uint256 collectionCounter = 0;
+    uint256 public collectionCounter = 0;
     mapping(bytes32 =>bool) public usedNotices;
 
     constructor() {
@@ -58,6 +58,7 @@ contract AIDeGenFactory is AccessControl {
         require(usedNotices[hash] == false, "This notice has already been used");
         usedNotices[hash] = true;
         AIDeGen newNft = new AIDeGen(user, cid);
+        nftCollections[collectionCounter] = address(newNft);
         emit AIDeGenCreated(user, cartesiDapp, address(newNft), collectionCounter);
         collectionCounter++;
     }

@@ -1,6 +1,7 @@
 
 import PinataClient, { PinataPinOptions } from "@pinata/sdk";
 import { promises as fs } from 'fs';
+import { ethers } from "ethers";
 
 const pinata = new PinataClient(process.env.PINATA_APIKey, process.env.PINATA_APISecret);
 
@@ -12,8 +13,12 @@ pinata.testAuthentication().then((result) => {
     console.log("Couldnt connect to Pinata", err);
 });
 
-export async function saveImageToDisk(): Promise<string> {
-    return "placeholder";
+const tempImgFile = "./tempImage.png";
+
+export async function saveImageToDisk(payload:string): Promise<string> {
+    const data = ethers.getBytes(payload)
+    await fs.appendFile(tempImgFile, Buffer.from(data));
+    return tempImgFile;
 }
 
 export async function uploadImg(fileImg:string, fileName:string):Promise<string> {
@@ -56,11 +61,11 @@ export async function uploadJSONFile(fileImg:string, fileName:string) {
             cidVersion: 0
         }
     };
-    const result = await pinata.pinFromFS(fileImg, options);
-
+    const result = await pinata.pinFromFS(fileName, options);
+    return result.IpfsHash;
 }
 
-export async function cleanFiles(jsonFile:string, imageFile:string) {
+export async function cleanFiles(jsonFile:string) {
     await fs.unlink(jsonFile);
-    await fs.unlink(imageFile);
+    await fs.unlink(tempImgFile);
 }
